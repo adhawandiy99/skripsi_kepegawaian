@@ -54,7 +54,7 @@
     <link rel="stylesheet" href="/sneat/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
 
     <link rel="stylesheet" href="/sneat/assets/vendor/libs/apex-charts/apex-charts.css" />
-
+    @yield('css')
     <!-- Page CSS -->
 
     <!-- Helpers -->
@@ -226,6 +226,7 @@
     $('.select2').select2();
 });
     </script>
+    @yield('js')
     @include('sweetalert::alert')
   </body>
 </html>
