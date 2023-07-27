@@ -54,39 +54,41 @@
             </div> -->
 
       <div class="card">
-        <div class="card-datatable table-responsive pt-0">
+        <div class="card-datatable table-responsive p-2">
           <table class="datatables-basic table border-top">
             <thead>
               <tr>
                 <th></th>
                 <th></th>
                 <th>id</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Date</th>
-                <th>Salary</th>
-                <th>Status</th>
-                <th>Action</th>
+                <th>No</th>
+                <th>Golongan</th>
+                <th>Masa Kerja</th>
+                <th>Gaji Pokok</th>
+                <th>Tahun Gaji</th>
+                <th>Aksi</th>
               </tr>
             </thead>
             <tbody>
-                <tr>
+                @foreach ($gaji as $no => $item)
+                <tr><td></td>
                     <td></td>
-                    <td></td>
-                    <td>ID</td>
-                    <td>name</td>
-                    <td>email</td>
-                    <td>date</td>
-                    <td>salary</td>
-                    <td>status</td>
-                    <td><a href="{{ route('gaji.edit', $item->id) }}" class="btn btn-warning btn-sm">  <i class="bx bx-edit"></i></a>
-                                   <form onsubmit="return confirm('Yakin Mau Hapus Data??')" action="{{ route('gaji.destroy', $item->id) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="btn btn-danger btn-sm" type="submit"><i class="bx bx-trash"></i></button>
-                                  </form></td>
-                    
+                    <td>{{ $item->id }}</td>
+                    <td>{{ ++$no }}</td>
+                    <td>{{ $item->golongan }}</td>
+                    <td>{{ $item->masa_kerja }}</td>
+                    <td>{{ $item->gaji_pokok }}</td>
+                    <td>{{ $item->tahun }}</td>
+                    <td>
+                       <a href="{{ route('gaji.edit', $item->id) }}" class="btn btn-warning btn-sm">  <i class="bx bx-edit"></i></a>
+                       <form onsubmit="return confirm('Yakin Mau Hapus Data??')" action="{{ route('gaji.destroy', $item->id) }}" method="POST" class="d-inline">
+                        @csrf
+                        @method('DELETE')
+                        <button class="btn btn-danger btn-sm" type="submit"><i class="bx bx-trash"></i></button>
+                      </form>
+                    </td>
                 </tr>
+                @endforeach
             </tbody>
           </table>
         </div>
@@ -100,7 +102,6 @@
             "use strict";
             var e=$(".datatables-basic");
             e.length&&(e.DataTable({
-                columns:[{data:""},{data:"id"},{data:"id"},{data:"full_name"},{data:"email"},{data:"start_date"},{data:"salary"},{data:"status"},{data:""}],
                 columnDefs:[{className:"control",orderable:!1,responsivePriority:2,searchable:!1,targets:0,
                         render:function(e,t,a,s){return""}},{targets:1,orderable:!1,responsivePriority:3,searchable:!1,checkboxes:!0,checkboxes:{selectAllRender:'<input type="checkbox" class="form-check-input">'},
                         render:function(){return'<input type="checkbox" class="dt-checkboxes form-check-input">'}},{targets:2,searchable:!1,visible:!1},{targets:3,responsivePriority:4},{responsivePriority:1,targets:4},{targets:-1,title:"Actions",orderable:!1,searchable:!1}],
