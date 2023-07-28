@@ -2,7 +2,7 @@
     <div class="row">
         <hr class="dropdown-divider">
         <p class="mb-4"><strong>Data Riwayat Diklat :</strong></p>
-        <table class="table table-bordered table-sm">
+        <table class="table table-bordered table-sm datatables-basic">
             <thead class="text-center">
                 <tr>
                     <th>No</th>
@@ -19,7 +19,7 @@
                 @php
                      $no = 1;
                 @endphp
-                @forelse ($user->diklat_pns as $item)
+                @foreach ($user->diklat_pns as $item)
                 <tr>
                     <td>{{ $no++ }}</td>
                     <td>{{ $item->nama_diklat }}</td>
@@ -30,9 +30,7 @@
                     <td>{{ $item->ttd_pejabat }}</td>
                     <td class="text-warning">{{ $item->status_diklat }}</td>
                 </tr>
-                @empty
-                <td colspan="4">Data Tidak Ada</td>
-                @endforelse
+                @endforeach
             </tbody>
         </table>
     </div>

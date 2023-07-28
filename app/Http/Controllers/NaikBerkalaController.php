@@ -26,6 +26,23 @@ class NaikBerkalaController extends Controller
         $naikBerkala = NaikBerkala::all();
         return view('pegawai.admin.kenaikan.naik-gaji-berkala.index',compact('naikBerkala'));
     }
+    public function approvalAdmin($kenaikan_id)
+    {
+        $kenaikan = QB_Kenaikan_Gaji::getById($kenaikan_id);
+        $user = QB_Kepegawaian::getPegawaiByID($kenaikan->user_id);
+        return view('pegawai.admin.kenaikan.naik-gaji-berkala.approval', compact('user','kenaikan'));
+    }
+    public function saveApprovalAdmin($kenaikan_id, Request $req)
+    {
+        // dd($kenaikan_id,$req);
+        $validateData = $req->validate([
+            'ket' => 'required'
+        ]);
+        Alert::success('Sukses', 'Berhasil Submit approval');
+        NaikBerkala::where('id', $kenaikan_id)->update($validateData);
+        return redirect()->route('berkala.admin');
+    }
+
 
     //Halaman Detail (Belum)
     //Fungsi hapus Belum(Belum)
@@ -147,9 +164,14 @@ class NaikBerkalaController extends Controller
         return redirect()->route('index.berkala');
     }
 
-    //Halaman Edit (Belum)
-    //Fungsi Update (Belum)
+    //Halaman Edit (Belum)done
+    //Fungsi Update (Belum)done
     //Halaman Detail (Belum)
-    //Fungsi hapus Belum(Belum)
-
+    //Fungsi hapus Belum(Belum)done
+    public function deleteData(Request $req)
+    {
+        NaikBerkala::where('id',$req->id)->delete();
+        Alert::success('Sukses', 'Berhasil Menghapus Data');
+        return redirect()->back();
+    }
 }

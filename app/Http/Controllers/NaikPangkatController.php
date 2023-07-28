@@ -27,37 +27,106 @@ class NaikPangkatController extends Controller
     //Halaman Data Kenaikan Pangkat PNS Jabtan Reguler Eselon Struktural
     public function AdminStruktural()
     {
-        $naikPangkat = NaikPangkat::all();
+        $naikPangkat = NaikPangkat::where('jenis_usulan', 1)->get();
         return view('pegawai.admin.kenaikan.naik-pangkat.eselon-struktural.index', compact('naikPangkat'));
     }
+    public function approvalStruktural($kenaikan_id)
+    {
+        $kenaikan = QB_Kenaikan_pangkat::getById($kenaikan_id);
+        $user = QB_Kepegawaian::getPegawaiByID($kenaikan->user_id);
+        $pangkat = Pangkat::get();
+        return view('pegawai.admin.kenaikan.naik-pangkat.eselon-struktural.approval', compact('user','pangkat', 'kenaikan'));
+    }
+    public function saveApprovalStruktural($kenaikan_id, Request $req)
+    {
+        $validateData = $req->validate([
+            'ket' => 'required'
+        ]);
+        // dd($validateData);
+        NaikPangkat::where('id', $kenaikan_id)->update($validateData);
+        Alert::success('Sukses', 'Berhasil Submit approval');
+        return redirect()->route('index.struktural');
+    }
+
+    
 
     //Halaman Data Kenaikan Pangkat PNS Jabtan Pelaksana/Staf
     public function AdminPS()
     {
 
-        $naikPangkat = NaikPangkatPS::all();
+        $naikPangkat = NaikPangkat::where('jenis_usulan', 2)->get();
         return view('pegawai.admin.kenaikan.naik-pangkat.pelaksana_staf.index', compact('naikPangkat'));
 
+    }
+    public function approvalPS($kenaikan_id)
+    {
+        $kenaikan = QB_Kenaikan_pangkat::getById($kenaikan_id);
+        $user = QB_Kepegawaian::getPegawaiByID($kenaikan->user_id);
+        $pangkat = Pangkat::get();
+        return view('pegawai.admin.kenaikan.naik-pangkat.pelaksana_staf.approval', compact('user','pangkat', 'kenaikan'));
+    }
+    public function saveApprovalPS($kenaikan_id, Request $req)
+    {
+        $validateData = $req->validate([
+            'ket' => 'required'
+        ]);
+        // dd($validateData);
+        NaikPangkat::where('id', $kenaikan_id)->update($validateData);
+        Alert::success('Sukses', 'Berhasil Submit approval');
+        return redirect()->route('index.ps');
     }
 
     //Halaman Data Kenaikan Pangkat PNS Jabtan Pelaksana/Staf Penyesuaian Ijazah
     public function AdminPSI()
     {
 
-        $naikPangkat = NaikPangkatPS::all();
+        $naikPangkat = NaikPangkat::where('jenis_usulan', 3)->get();
         return view('pegawai.admin.kenaikan.naik-pangkat.pelaksana_staf_ijazah.index',compact('naikPangkat'));
 
+    }
+    public function approvalPSI($kenaikan_id)
+    {
+        $kenaikan = QB_Kenaikan_pangkat::getById($kenaikan_id);
+        $user = QB_Kepegawaian::getPegawaiByID($kenaikan->user_id);
+        $pangkat = Pangkat::get();
+        return view('pegawai.admin.kenaikan.naik-pangkat.pelaksana_staf_ijazah.approval', compact('user','pangkat', 'kenaikan'));
+    }
+    public function saveApprovalPSI($kenaikan_id, Request $req)
+    {
+        $validateData = $req->validate([
+            'ket' => 'required'
+        ]);
+        // dd($validateData);
+        NaikPangkat::where('id', $kenaikan_id)->update($validateData);
+        Alert::success('Sukses', 'Berhasil Submit approval');
+        return redirect()->route('index.psi');
     }
 
     //Halaman Data Kenaikan Pangkat PNS Jabtan Fungsional Tertentu
     public function AdminFT()
     {
 
-        $naikPangkat = naikPangkatFt::all();
+        $naikPangkat = NaikPangkat::where('jenis_usulan', 4)->get();
         return view('pegawai.admin.kenaikan.naik-pangkat.fungsional_tertentu.index', compact('naikPangkat'));
 
     }
-
+    public function approvalFT($kenaikan_id)
+    {
+        $kenaikan = QB_Kenaikan_pangkat::getById($kenaikan_id);
+        $user = QB_Kepegawaian::getPegawaiByID($kenaikan->user_id);
+        $pangkat = Pangkat::get();
+        return view('pegawai.admin.kenaikan.naik-pangkat.fungsional_tertentu.approval', compact('user','pangkat', 'kenaikan'));
+    }
+    public function saveApprovalFT($kenaikan_id, Request $req)
+    {
+        $validateData = $req->validate([
+            'ket' => 'required'
+        ]);
+        // dd($validateData);
+        NaikPangkat::where('id', $kenaikan_id)->update($validateData);
+        Alert::success('Sukses', 'Berhasil Submit approval');
+        return redirect()->route('index.ft');
+    }
 
 
     //--PEGAWAI--

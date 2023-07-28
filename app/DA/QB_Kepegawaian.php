@@ -9,7 +9,8 @@ class QB_Kepegawaian
   }
   public static function getPegawaiByID($id)
   {
-    return DB::table('users as u')->leftJoin('kepegawaians as k', 'u.id','=','k.user_id')->where('u.id', $id)->first();
+    return DB::table('users as u')->leftJoin('kepegawaians as k', 'u.id','=','k.user_id')
+      ->where('u.id', $id)->first();
   }
   public static function getKepalaSatuan()
   {

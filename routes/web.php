@@ -46,15 +46,26 @@ Route::group(['prefix' => 'Admin', 'middleware' => ['auth','role:Admin']], funct
     Route::get('/menu-kenaikan-pangkat', [NaikPangkatController::class, 'naikPangkatMenuAdmin'])->name('data.naikPangkat');
     //Jabatan Reguler Eselon Struktural
     Route::get('/index-struktural', [NaikPangkatController::class, 'AdminStruktural'])->name('index.struktural');
+    Route::get('/approval-struktural/{kenaikan_id}', [NaikPangkatController::class, 'approvalStruktural'])->name('approval.struktural');
+    Route::post('/approval-struktural/{kenaikan_id}', [NaikPangkatController::class, 'saveApprovalStruktural']);
     //Jabatan  Pelaksana Staf
     Route::get('/index-pelasana-staf', [NaikPangkatController::class, 'AdminPS'])->name('index.ps');
+    Route::get('/approval-pelasana-staf/{kenaikan_id}', [NaikPangkatController::class, 'approvalPS'])->name('approval.ps');
+    Route::post('/approval-pelasana-staf/{kenaikan_id}', [NaikPangkatController::class, 'saveApprovalPS']);
+
     //Jabatan  Pelaksana Staf Penyesuaian Ijazah
     Route::get('/index-pelasana-staf-ijazah', [NaikPangkatController::class, 'AdminPSI'])->name('index.psi');
+    Route::get('/approval-pelasana-staf-ijazah/{kenaikan_id}', [NaikPangkatController::class, 'approvalPSI'])->name('approval.psi');
+    Route::post('/approval-pelasana-staf-ijazah/{kenaikan_id}', [NaikPangkatController::class, 'saveApprovalPSI']);
     //Jabatan Fungsional Tertentu
     Route::get('/index-fungsional', [NaikPangkatController::class, 'AdminFT'])->name('index.ft');
+    Route::get('/approval-fungsional/{kenaikan_id}', [NaikPangkatController::class, 'approvalFT'])->name('approval.ft');
+    Route::post('/approval-fungsional/{kenaikan_id}', [NaikPangkatController::class, 'saveApprovalFT']);
 
     //route Data Kenaikan Gaji Berkala :
     Route::get('/index.berkala', [NaikBerkalaController::class, 'indexAdmin'])->name('berkala.admin');
+    Route::get('/approval-berkala/{kenaikan_id}', [NaikBerkalaController::class, 'approvalAdmin'])->name('approval.berkala.admin');
+    Route::post('/approval-berkala/{kenaikan_id}', [NaikBerkalaController::class, 'saveApprovalAdmin'])->name('saveapproval.berkala.admin');
 
 });
 

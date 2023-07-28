@@ -11,7 +11,8 @@ class QB_Kenaikan_pangkat
   }
   public static function getById($id)
   {
-    return DB::table('naik_pangkats')->where('id', $id)->first();
+    return DB::table('naik_pangkats as n')
+      ->leftJoin('pangkats as p', 'n.pangkat_id','=','p.id_pangkat')->where('n.id', $id)->first();
   }
   public static function getAllByUserUsulan($user_id,$jenis_usulan)
   {
