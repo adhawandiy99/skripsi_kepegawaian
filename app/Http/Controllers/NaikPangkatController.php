@@ -11,66 +11,12 @@ use App\Models\NaikPangkatFT;
 use App\Models\NaikPangkatPS;
 use App\Models\NaikPangkatPSI;
 use PhpParser\Node\Stmt\Return_;
+use Illuminate\Support\Facades\Auth;
+use App\DA\QB_Kepegawaian;
+use App\DA\QB_Kenaikan_pangkat;
 
 class NaikPangkatController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
-
-
     //--ADMIN--
     //Menu Kenaikan Pangkat
     public function naikPangkatMenuAdmin()
@@ -127,41 +73,55 @@ class NaikPangkatController extends Controller
     public function pangkatStrutural()
     {
         $user = auth()->id();
-        $naikPangkat = NaikPangkat::where('user_id', $user)->get();
+        $naikPangkat = NaikPangkat::where('user_id', $user)->where('jenis_usulan', 1)->get();
         return view('pegawai.pns.kenaikan.naik_pangkat.eselon_struktural.riwayat',compact('naikPangkat'));
     }
 
     //Halaman Tambah Data Kenaikan Pangkat Jabatan Reguler Eselon Struktural
-    public function tambahStruktural()
+    public function formStruktural($kenaikan_id)
     {
+        $user_id = auth()->id();
+        $user = QB_Kepegawaian::getPegawaiByID($user_id);
         $pangkat = Pangkat::get();
-        return view('pegawai.pns.kenaikan.naik_pangkat.eselon_struktural.create', [
-            'user' => User::where('users.id','=',auth()->user()->id)->join('kepegawaians','kepegawaians.user_id','=','users.id')
-            ->first(),
-            'pangkat' => $pangkat,
-        ]);
+        $kenaikan = QB_Kenaikan_pangkat::getById($kenaikan_id);
+        // dd($kenaikan,$kenaikan_id);
+        return view('pegawai.pns.kenaikan.naik_pangkat.eselon_struktural.create', compact('user','pangkat', 'kenaikan'));
+    }
+    //delete all usulan by id
+    public function deleteUsulanKenaikan(Request $req)
+    {
+        // dd($req->id);
+        QB_Kenaikan_pangkat::deleteUsulan($req->id);
+        Alert::success('Sukses', 'Berhasil menghapus usulan');
+        return redirect()->back();
     }
 
     //Fungsi Simpan Data Kenaikan Pangkat Jabatan Reguler Eselon Struktural
-    public function storeStruktrural(Request $request)
+    public function storeStruktrural($kenaikan_id, Request $request)
     {
+
         $validateData = $request->validate([
             'pangkat_id' => 'required',
             'mulai_tanggal' => 'required',
             'naik_selanjutnya' => 'required',
             'tgl_usulan' => 'required',
-            'link' => 'required',
+            'jenis_usulan' => 'required',
         ]);
-
         $validateData['user_id'] = auth()->user()->id;
-        NaikPangkat::create($validateData);
+        if(QB_Kenaikan_pangkat::getById($kenaikan_id)){
+            //todo update
+            NaikPangkat::where('id',$kenaikan_id)->update($validateData);
+        }else{
+            //todo insert
+            NaikPangkat::create($validateData);
+        }
         Alert::success('Sukses', 'Data Usul Kenaikan Pangkat Jabatan Eselon Struktural Berhasil Disimpan');
         return redirect()->route('menu.pangkat.struktural');
     }
 
-    //Halaman Edit (Belum Ada)
-    //Fungsi Update (Belum Ada)
-    //Halaman Detail (Belum Ada
+    //Halaman Edit (Belum Ada)/done
+    //Fungsi Update (Belum Ada)/done
+    //Halaman Detail (Belum Ada/done
 
 
     // ---Jabatan Pelaksana/Staf----
@@ -169,25 +129,44 @@ class NaikPangkatController extends Controller
     public function pangkatPelaksanaStaf()
     {
         $user = auth()->id();
-        $naikPangkat = NaikPangkatPS::where('user_id', $user)->get();
+        $naikPangkat = NaikPangkat::where('user_id', $user)->where('jenis_usulan', 2)->get();
         return view('pegawai.pns.kenaikan.naik_pangkat.pelaksana_staf.riwayat',compact('naikPangkat'));
     }
 
     //Halaman Tambah Data Kenaikan Pangkat Jabatan Pelaksana/Staf
-    public function tambahPelaksanaStaf()
+    public function formPelaksanaStaf($kenaikan_id)
     {
+        $user_id = auth()->id();
+        $user = QB_Kepegawaian::getPegawaiByID($user_id);
         $pangkat = Pangkat::get();
-        return view('pegawai.pns.kenaikan.naik_pangkat.pelaksana_staf.create', [
-            'user' => User::where('users.id','=',auth()->user()->id)->join('kepegawaians','kepegawaians.user_id','=','users.id')
-            ->first(),
-            'pangkat' => $pangkat,
+        $kenaikan = QB_Kenaikan_pangkat::getById($kenaikan_id);
+        return view('pegawai.pns.kenaikan.naik_pangkat.pelaksana_staf.create', compact('pangkat', 'user', 'kenaikan'));
+    }
+    public function simpanPelaksanaStaf($kenaikan_id, Request $request)
+    {
+        $validateData = $request->validate([
+            'pangkat_id' => 'required',
+            'mulai_tanggal' => 'required',
+            'naik_selanjutnya' => 'required',
+            'tgl_usulan' => 'required',
+            'jenis_usulan' => 'required',
         ]);
+        $validateData['user_id'] = auth()->user()->id;
+        if(QB_Kenaikan_pangkat::getById($kenaikan_id)){
+            //todo update
+            NaikPangkat::where('id',$kenaikan_id)->update($validateData);
+        }else{
+            //todo insert
+            NaikPangkat::create($validateData);
+        }
+        Alert::success('Sukses', 'Data Usul Kenaikan Pangkat Jabatan Pelaksana Staff Berhasil Disimpan');
+        return redirect()->route('menu.pangkat.pestaf');
     }
 
-    //Fungsi Simpan (Belum Ada)
-    //Halaman Edit (Belum Ada)
-    //Fungsi Update (Belum Ada)
-    //Halaman Detail (Belum Ada
+    //Fungsi Simpan (Belum Ada)/done
+    //Halaman Edit (Belum Ada)/done
+    //Fungsi Update (Belum Ada)/done
+    //Halaman Detail (Belum Ada/done
 
 
 
@@ -195,51 +174,88 @@ class NaikPangkatController extends Controller
     //Halaman Riwayat Kenaikan Pangkat Jabatan Pelaksana/Staf Penyesuaian Ijazah
     public function pangkatPeStafijazah()
     {
-        $user = auth()->id();
-        $naikPangkat = NaikPangkatPSI::where('user_id', $user)->get();
+        $naikPangkat = $naikPangkat = NaikPangkat::where('user_id', auth()->id())->where('jenis_usulan', 3)->get();
         return view('pegawai.pns.kenaikan.naik_pangkat.pelaksana_staf_ijazah.riwayat',compact('naikPangkat'));
     }
 
     //Halaman Tambah Data Kenaikan Pangkat Jabatan Pelaksana/Staf Penyesuaian Ijazah
-    public function tambahPSI()
+    public function formPSI($kenaikan_id)
     {
+        $user = QB_Kepegawaian::getPegawaiByID(auth()->id());
+        // dd($user);
         $pangkat = Pangkat::get();
-        return view('pegawai.pns.kenaikan.naik_pangkat.pelaksana_staf_ijazah.create', [
-            'user' => User::where('users.id','=',auth()->user()->id)->join('kepegawaians','kepegawaians.user_id','=','users.id')
-            ->first(),
-            'pangkat' => $pangkat,
-        ]);
+        $kenaikan = QB_Kenaikan_pangkat::getById($kenaikan_id);
+        return view('pegawai.pns.kenaikan.naik_pangkat.pelaksana_staf_ijazah.create', compact('pangkat', 'user', 'kenaikan'));
     }
 
-    //Fungsi Simpan (Belum Ada)
-    //Halaman Edit (Belum Ada)
-    //Fungsi Update (Belum Ada)
-    //Halaman Detail (Belum Ada
+    public function simpanPSI($kenaikan_id, Request $request)
+    {
+        $validateData = $request->validate([
+            'pangkat_id' => 'required',
+            'mulai_tanggal' => 'required',
+            'naik_selanjutnya' => 'required',
+            'tgl_usulan' => 'required',
+            'jenis_usulan' => 'required',
+        ]);
+        $validateData['user_id'] = auth()->user()->id;
+        if(QB_Kenaikan_pangkat::getById($kenaikan_id)){
+            //todo update
+            NaikPangkat::where('id',$kenaikan_id)->update($validateData);
+        }else{
+            //todo insert
+            NaikPangkat::create($validateData);
+        }
+        Alert::success('Sukses', 'Data Usul Kenaikan Pangkat Jabatan Pelaksana/Staf Penyesuaian Ijazah Berhasil Disimpan');
+        return redirect()->route('menu.pangkat.pestafijazah');
+    }
+    //Fungsi Simpan (Belum Ada)/done
+    //Halaman Edit (Belum Ada)/done
+    //Fungsi Update (Belum Ada)/done
+    //Halaman Detail (Belum Ada/done
 
 
     // ---Jabatan Reguler Jabatan Fungsional Tertentu----
     //Halaman Riwayat Kenaikan Pangkat Jabatan Funsional Tertentu
     public function naikPangkatFt()
     {
-        $user = auth()->id();
-        $naikPangkat = NaikPangkatFT::where('user_id', $user)->get();
+        // $user = auth()->id();
+        // $naikPangkat = NaikPangkatFT::where('user_id', $user)->get();
+        $naikPangkat = $naikPangkat = NaikPangkat::where('user_id', auth()->id())->where('jenis_usulan', 4)->get();
         return view('pegawai.pns.kenaikan.naik_pangkat.fungsional_tertentu.riwayat',compact('naikPangkat'));
     }
 
     //Halaman Tambah Data Kenaikan Pangkat Jabatan Fungsional tertentu
-    public function tambahFt()
+    public function formFt($kenaikan_id)
     {
+        $user = QB_Kepegawaian::getPegawaiByID(auth()->id());
+        // dd($user);
         $pangkat = Pangkat::get();
-        return view('pegawai.pns.kenaikan.naik_pangkat.fungsional_tertentu.create', [
-            'user' => User::where('users.id','=',auth()->user()->id)->join('kepegawaians','kepegawaians.user_id','=','users.id')
-            ->first(),
-            'pangkat' => $pangkat,
-        ]);
+        $kenaikan = QB_Kenaikan_pangkat::getById($kenaikan_id);
+        return view('pegawai.pns.kenaikan.naik_pangkat.fungsional_tertentu.create', compact('pangkat', 'user', 'kenaikan'));
     }
-
-    //Fungsi Simpan (Belum Ada)
-    //Halaman Edit (Belum Ada)
-    //Fungsi Update (Belum Ada)
-    //Halaman Detail (Belum Ada
+    public function insertOrUpdateFt($kenaikan_id, Request $req)
+    {
+        $validateData = $req->validate([
+            'pangkat_id' => 'required',
+            'mulai_tanggal' => 'required',
+            'naik_selanjutnya' => 'required',
+            'tgl_usulan' => 'required',
+            'jenis_usulan' => 'required',
+        ]);
+        $validateData['user_id'] = auth()->user()->id;
+        if(QB_Kenaikan_pangkat::getById($kenaikan_id)){
+            //todo update
+            NaikPangkat::where('id',$kenaikan_id)->update($validateData);
+        }else{
+            //todo insert
+            NaikPangkat::create($validateData);
+        }
+        Alert::success('Sukses', 'Data Usul Kenaikan Pangkat Jabatan Fungsional Tertentu Berhasil Disimpan');
+        return redirect()->route('menu.pangkat.ft');
+    }
+    //Fungsi Simpan (Belum Ada)/done
+    //Halaman Edit (Belum Ada)/done
+    //Fungsi Update (Belum Ada)/done
+    //Halaman Detail (Belum Ada/done
 
 }

@@ -4,15 +4,15 @@
         @csrf
         <div class="card-body">
             <div class="d-flex align-items-start align-items-sm-center gap-4">
-              <img src="../assets/img/avatars/1.png" alt="user-avatar" class="d-block rounded" height="100" width="100" id="uploadedAvatar" />
+            @if (file_exists(public_path().'/images/'.$user->id.'.png'))
+              <img src="/images/{{ $user->id }}.png" alt="user-avatar" class="d-block rounded" height="100" width="100" id="uploadedAvatar" />
+            @else
+                <img src="/placeholder.png" alt="user-avatar" class="d-block rounded" height="100" width="100" id="uploadedAvatar" />
+            @endif
               <div class="button-wrapper">
                 <label for="foto">Foto</label>
                 <input type="hidden" name="oldFoto" value="{{ $user->foto }}">
-                @if ($user->foto)
-                <img src="{{ asset('storage/' . $user->foto) }}" class="img-preview img-fluid mb-3 col-sm-2 d-block">
-                @else
                 <img class="img-preview img-fluid mb-3 col-sm-2">
-                @endif
                 <input type="file" class="form-control col-4 @error('foto') is-invalid @enderror" id="foto" name="foto"  onchange="previewImage()" accept="image/*" >
                 @error('foto')
                     <div class="invalid-feedback">
@@ -20,6 +20,7 @@
                      </div>
                  @enderror
                  <button type="submit" class="btn btn-info btn-sm mt-2">Simpan</button>
+                 <button type="button" class="btn btn-info btn-sm mt-2" id="create_pdf">Pdf</button>
                 </div>
             </div>
           </div>

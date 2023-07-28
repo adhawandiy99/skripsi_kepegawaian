@@ -33,7 +33,7 @@ Route::get('/settings', [App\Http\Controllers\PegawaiController::class, 'changeP
 Route::put('/change/{id}', [App\Http\Controllers\PegawaiController::class, 'updatePassword'])->name('update.pass');
 
 //ADMIN
-Route::group(['prefix' => 'Admin', 'middleware' => ['auth']], function(){
+Route::group(['prefix' => 'Admin', 'middleware' => ['auth','role:Admin']], function(){
     Route::resource('pegawai', PegawaiController::class);
     Route::resource('naik-berkala', NaikBerkalaController::class);
     Route::resource('gaji', GajiController::class);
@@ -59,7 +59,7 @@ Route::group(['prefix' => 'Admin', 'middleware' => ['auth']], function(){
 });
 
 //PNS(PEGAWAI)
-Route::group(['prefix' => 'PNS', 'middleware' => ['auth']], function(){
+Route::group(['prefix' => 'PNS', 'middleware' => ['auth','role:Pegawai|Admin']], function(){
     //-- Halaman profile Pegawai--//
     Route::get('profile-pegawai', [PegawaiController::class, 'showPegawai'])->name('show.pegawai');
     Route::put('/pegawai/{id}', [App\Http\Controllers\PegawaiController::class, 'updateData'])->name('update.pegawai');
@@ -85,24 +85,32 @@ Route::group(['prefix' => 'PNS', 'middleware' => ['auth']], function(){
 
     //Route Kenaikan Gaji Berkala :
     Route::get('/index-naik-berkala', [NaikBerkalaController::class, 'indexPegawai'])->name('index.berkala');
-    Route::get('/tambah-naik-berkala', [NaikBerkalaController::class, 'createNaikBerkala'])->name('tambah.berkala');
-    Route::post('/naik-berkala-simpan', [App\Http\Controllers\NaikBerkalaController::class, 'simpanData'])->name('simpan.berkala');
+    Route::get('/tambah-naik-berkala/{kenaikan_id}', [NaikBerkalaController::class, 'createNaikBerkala'])->name('tambah.berkala');
+    Route::post('/naik-berkala-simpan/{kenaikan_id}', [App\Http\Controllers\NaikBerkalaController::class, 'simpanData'])->name('simpan.berkala');
+    Route::delete('/delete-usulan-gaji', [App\Http\Controllers\NaikBerkalaController::class, 'deleteData'])->name('delete.berkala');
 
     //Route Kenaikan Pangkat
     Route::get('/menu-naik-pangkat', [NaikPangkatController::class, 'naikPangkatMenu'])->name('menu.naik.pangkat');
     //Reguler Eselon Struktural
     Route::get('/menu-naik-struktural', [NaikPangkatController::class, 'pangkatStrutural'])->name('menu.pangkat.struktural');
-    Route::get('/tambah-naik-struktural', [NaikPangkatController::class, 'tambahStruktural'])->name('tambah.pangkat.struktural');
-    Route::post('/simpan-naik-struktural', [NaikPangkatController::class, 'storeStruktrural'])->name('simpan.pangkat.struktural');
+    Route::get('/tambah-naik-struktural/{kenaikan_id}', [NaikPangkatController::class, 'formStruktural'])->name('tambah.pangkat.struktural');
+    Route::post('/simpan-naik-struktural/{kenaikan_id}', [NaikPangkatController::class, 'storeStruktrural'])->name('simpan.pangkat.struktural');
+    Route::delete('/delete-usulan-kenaikan', [NaikPangkatController::class, 'deleteUsulanKenaikan']);
+
     //Pelaksana Staf
     Route::get('/menu-naik-Pelaksana-staf', [NaikPangkatController::class, 'pangkatPelaksanaStaf'])->name('menu.pangkat.pestaf');
-    Route::get('/tambah-naik-Pelaksana-staf', [NaikPangkatController::class, 'tambahPelaksanaStaf'])->name('tambah.pangkat.pestaf');
+    Route::get('/tambah-naik-Pelaksana-staf/{kenaikan_id}', [NaikPangkatController::class, 'formPelaksanaStaf'])->name('tambah.pangkat.pestaf');
+    Route::post('/simpan-naik-Pelaksana-staf/{kenaikan_id}', [NaikPangkatController::class, 'simpanPelaksanaStaf'])->name('simpan.pangkat.pestaf');
+
     //Pelaksana Staf Penyesuaian Ijazah
     Route::get('/menu-naik-Pelaksana-staf-penyesuaian', [NaikPangkatController::class, 'pangkatPeStafijazah'])->name('menu.pangkat.pestafijazah');
-    Route::get('/tambah-naik-Pelaksana-staf-penyesuaian', [NaikPangkatController::class, 'tambahPSI'])->name('tambah.pangkat.psi');
+    Route::get('/tambah-naik-Pelaksana-staf-penyesuaian/{kenaikan_id}', [NaikPangkatController::class, 'formPSI'])->name('tambah.pangkat.psi');
+    Route::post('/tambah-naik-Pelaksana-staf-penyesuaian/{kenaikan_id}', [NaikPangkatController::class, 'simpanPSI'])->name('simpan.pangkat.psi');
+
     //Fungsional Tertentu
     Route::get('/menu-naik-Pelaksana-fungsional-tertentu', [NaikPangkatController::class, 'naikPangkatFt'])->name('menu.pangkat.ft');
-    Route::get('/tambah-naik-Pelaksana-fungsional-tertentu', [NaikPangkatController::class, 'tambahFt'])->name('tambah.pangkat.ft');
+    Route::get('/tambah-naik-Pelaksana-fungsional-tertentu/{kenaikan_id}', [NaikPangkatController::class, 'formFt'])->name('tambah.pangkat.ft');
+    Route::post('/tambah-naik-Pelaksana-fungsional-tertentu/{kenaikan_id}', [NaikPangkatController::class, 'insertOrUpdateFt'])->name('simpan.pangkat.ft');
 
     //Ambil Data Padaringan
     Route::get('/fetchPadaringan', [PegawaiController::class, 'fetchPadaringan'])->name('get.padaringan');

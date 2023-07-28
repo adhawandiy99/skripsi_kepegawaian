@@ -11,7 +11,8 @@ class FileNaikBerkala extends Model
     protected $table="file_naik_berkalas";
     protected $fillable=[
         'file_berkas',
-        'file_berkas_path'
+        'file_berkas_path',
+        'user_id'
     ];
 
     public function file() {

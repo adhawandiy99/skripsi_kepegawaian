@@ -6,34 +6,35 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title"><strong>Usul Kenaikan Pangkat PNS Jabatan Reguler Eselon Struktural</strong></h3>
+                    <h3 class="card-title"><strong>{{ $kenaikan?'Ubah':'Input' }} Usul Kenaikan Pangkat PNS Jabatan Reguler Eselon Struktural</strong></h3>
                     <p>Silahkan Isi Data yang diperlukan</p>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('simpan.pangkat.struktural') }}" method="POST">
+                    <form action="{{ route('simpan.pangkat.struktural',['kenaikan_id'=>Request::segment(3)]) }}" method="POST">
                         @csrf
+                        <input type="hidden" name="jenis_usulan" value="1">
                          <div class="row">
                             <div class="mb-3 col-md-6">
                                 <label for="nip" class="form-label">NIP</label>
-                                <input class="form-control " type="text" id="nip" name="nip" value="{{ $user->nip }}" readonly/>
+                                <input class="form-control " type="text" id="nip" name="nip" value="{{ isset($user->nip) ? $user->nip : '' }}" readonly/>
                             </div>
                             <div class="mb-3 col-md-6">
                                 <label for="name" class="form-label">Nama PNS</label>
-                                <input class="form-control " type="text" id="name" name="name" value="{{ $user->name }}" readonly/>
+                                <input class="form-control " type="text" id="name" name="name" value="{{ isset($user->name) ? $user->name : '' }}" readonly/>
                             </div>
                             <div class="mb-3 col-md-6 ">
                                 <label for="email" class="form-label">Tempat, Tanggal lahir</label>
                                 <div class="d-flex">
                                     <input class="form-control" name="t_lahir" value="{{ $user->t_lahir }}" readonly/>
                                     <p>,</p>
-                                    <input class="form-control" type="date"  name="tgl_lahir" value="{{ $user->tgl_lahir }}" readonly/>
+                                    <input class="form-control" type="date"  name="tgl_lahir" value="{{ isset($user->tgl_lahir) ? $user->tgl_lahir : '' }}" readonly/>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="mb-3 col-md-6">
                                 <label for="jabatan" class="form-label">Jabatan</label>
-                                <input class="form-control " type="text" id="jabatan" name="jabatan" value="{{ $user->jabatan }}" readonly/>
+                                <input class="form-control " type="text" id="jabatan" name="jabatan" value="{{ $user->jabatan ?:'' }}" readonly/>
                             </div>
                             <div class="mb-3 col-md-6">
                                 <label for="golongan" class="form-label">Golongan</label>
@@ -46,18 +47,19 @@
                                 <input class="form-control" type="text" id="pangkat_lama" name="pangkat_lama" value="{{ $user->pangkat }}" readonly/>
                             </div>
                             <div class="mb-3 col-md-6">
-                                <label for="gaji_id" class="form-label text-info">Pangkat Baru</label>
-                                <select name="pangkat_id" class="form-select @error('pangkat_id') is-invalid @enderror">
-                                    <option value="" selected disabled>---Pilih Pangkat Baru---</option>
-                                          @foreach ($pangkat as $pang)
-                                              @if (old('pangkat_id') == $pang->pangkat_id)
-                                              <option value="{{ $pang->id_pangkat }}">{{ $pang->nama_pangkat }}</option>
-                                              @else
-                                              <option value="{{ $pang->id_pangkat }}">{{ $pang->nama_pangkat }}</option>
-                                              @endif
-                                          @endforeach
+                                <label for="pangkat_id" class="form-label text-info">Pangkat Baru</label>
+                                <select name="pangkat_id" class="form-select @error('pangkat_id') is-invalid @enderror" id="pangkat_id"> 
+                                    <option>---Pilih Pangkat Baru---</option>
+
+                                      @foreach ($pangkat as $pang)
+                                          @if (old('pangkat_id') == $pang->id_pangkat)
+                                          <option value="{{ $pang->id_pangkat }}" selected>{{ $pang->nama_pangkat }}</option>
+                                          @else
+                                          <option value="{{ $pang->id_pangkat }}">{{ $pang->nama_pangkat }}</option>
+                                          @endif
+                                      @endforeach
                                 </select>
-                                @error('gaji_id')
+                                @error('pangkat_id')
                                     <div class="invalid-feedback">
                                     {{ $message }}
                                     </div>
@@ -69,7 +71,7 @@
                             </div>
                             <div class="mb-3 col-md-6 ">
                                 <label for="mulai_tanggal" class="form-label">Mulai Tanggal</label>
-                                <input class="form-control @error('mulai_tanggal') is-invalid @enderror" type="date" id="mulai_tanggal" name="mulai_tanggal" value="{{ old('mulai_tanggal') }}" />
+                                <input class="form-control @error('mulai_tanggal') is-invalid @enderror" type="date" id="mulai_tanggal" name="mulai_tanggal" value="{{ isset($kenaikan->mulai_tanggal)?$kenaikan->mulai_tanggal:old('mulai_tanggal') }}" />
                                 @error('mulai_tanggal')
                                 <div class="invalid-feedback">
                                 {{ $message }}
@@ -79,7 +81,7 @@
 
                             <div class="mb-3 col-md-6 mb-4">
                                 <label for="naik_selanjutnya" class="form-label">Tanggal Kenaikan Selanjutnya</label>
-                                <input class="form-control @error('naik_selanjutnya') is-invalid @enderror" type="date" id="naik_selanjutnya" name="naik_selanjutnya" value="{{ old('naik_selanjutnya') }}" />
+                                <input class="form-control @error('naik_selanjutnya') is-invalid @enderror" type="date" id="naik_selanjutnya" name="naik_selanjutnya" value="{{ isset($kenaikan->naik_selanjutnya)?$kenaikan->naik_selanjutnya:old('naik_selanjutnya') }}" />
                                 @error('naik_selanjutnya')
                                 <div class="invalid-feedback">
                                 {{ $message }}
@@ -115,7 +117,7 @@
                         <div class="row">
                             <div class="mb-3 col-md-6">
                                 <label for="tgl_usulan" class="form-label">Tanggal Diusulkan</label>
-                                <input class="form-control @error('tgl_usulan') is-invalid @enderror" type="date" id="tgl_usulan" name="tgl_usulan" value="{{ old('tgl_usulan') }}" />
+                                <input class="form-control @error('tgl_usulan') is-invalid @enderror" type="date" id="tgl_usulan" name="tgl_usulan" value="{{ isset($kenaikan->tgl_usulan)?$kenaikan->tgl_usulan:old('tgl_usulan') }}" />
                                 @error('tgl_usulan')
                                 <div class="invalid-feedback">
                                 {{ $message }}
@@ -131,4 +133,11 @@
         </div>
     </div>
 </div>
+@endsection
+@section('js')
+    <script type="text/javascript">
+        var kenaikan = <?= json_encode($kenaikan); ?>;
+        $('#pangkat_id').val(kenaikan.pangkat_id);
+
+    </script>
 @endsection

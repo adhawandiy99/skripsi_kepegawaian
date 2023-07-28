@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
-
+use App\DA\QB_Kepegawaian;  //<-------Query Builder Init
 class PegawaiController extends Controller
 {
     /**
@@ -37,6 +37,7 @@ class PegawaiController extends Controller
     public function show($id)
     {
         $user = User::find($id);
+        // dd($user);
         return view('pegawai.admin.profile-pegawai.view',compact('user'));
     }
 
@@ -92,8 +93,10 @@ class PegawaiController extends Controller
     {
 
         $user=User::with('anak_pns')->find(auth()->user()->id);
-        // dd($user);
-        return view('pegawai.pns.view',compact('user'));
+        $qbpegawai = QB_Kepegawaian::getPegawaiByID(auth()->user()->id);
+        $qbkepalasatuan = QB_Kepegawaian::getKepalaSatuan();
+        // dd($qbpegawai);
+        return view('pegawai.pns.view',compact('user', 'qbpegawai','qbkepalasatuan'));
     }
 
 
@@ -155,15 +158,16 @@ class PegawaiController extends Controller
     //Fungsi Upload Foto (BELUM BERHASIL)
     public function uploadFoto(Request $request, User $user)
     {
+        // dd();
         $validatedData = $request->validate ([
             'foto' => 'mimes:jpeg,jpg,png|image|file|max:3024',
         ]);
         if($request->file('foto')){
-            $validatedData['foto'] = $request->file('foto')->store('images');
+            $validatedData['foto'] = $request->file('foto')->storeAs('images', $request->id.'.png');
         }
 
         // dd($validatedData);
-        User::create($validatedData);
+        // User::create($validatedData);
         Alert::success('Sukses', 'Foto Profile Berhasil Diubah');
         return redirect()->route('show.pegawai');
     }

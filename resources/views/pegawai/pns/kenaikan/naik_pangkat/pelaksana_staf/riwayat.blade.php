@@ -8,7 +8,7 @@
                 <div class="card-header">
                     <h3 class="card-title mb-3"><Strong>Data Kenaikan Pangkat PNS Jabatan Pelaksana/Staf</Strong></h3>
                     <h5>Riwayat Pangkat PNS Jabatan Pelaksana/Staf : {{ auth()->user()->name }} - {{ auth()->user()->nip }}</h5>
-                    <a href="{{ route('tambah.pangkat.pestaf') }}" class="btn btn-warning">Tambah Data</a>
+                    <a href="{{ route('tambah.pangkat.pestaf',['new']) }}" class="btn btn-warning">Tambah Data</a>
                 </div>
                 <div class="card-body">
                     <table class="table table-bordered table-sm">
@@ -33,17 +33,17 @@
                                 <td>{{ $no++ }}</td>
                                 <td>{{ $item->user_pegawai->nip }}</td>
                                 <td>{{ $item->user_pegawai->name }}</td>
-                                <td>{{ $item->user_pegawai->kepegawaian_pns->pangkat }}</td>
-                                <td>{{ $item->pangkat_pns->nama_pangkat }}</td>
+                                <td>{{ isset($item->user_pegawai->kepegawaian_pns->pangkat) ? $item->user_pegawai->kepegawaian_pns->pangkat: '' }}</td>
+                                <td>{{ isset($item->pangkat_pns->nama_pangkat) ? $item->pangkat_pns->nama_pangkat: ''}}</td>
                                 <td>{{ $item->tgl_usulan }}</td>
                                 <td>{{ $item->ket }}</td>
                                 <td>
                                     <a href="" class="btn btn-success btn-sm"> <i class="bx bx-search"></i></a>
-                                   <a href="" class="btn btn-warning btn-sm">  <i class="bx bx-edit"></i></a>
-                                   <form onsubmit="return confirm('Yakin Mau Hapus Data??')" action="" method="POST" class="d-inline">
+                                   <a href="{{ route('tambah.pangkat.pestaf',[$item->id]) }}" class="btn btn-warning btn-sm">  <i class="bx bx-edit"></i></a>
+                                   <form onsubmit="return confirm('Yakin Mau Hapus Data??')" action="/PNS/delete-usulan-kenaikan" method="post" class="d-inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button class="btn btn-danger btn-sm" type="submit"><i class="bx bx-trash"></i></button>
+                                    <button class="btn btn-danger btn-sm" type="submit" name="id" value="{{$item->id}}"><i class="bx bx-trash"></i></button>
                                   </form>
                                 </td>
                             </tr>

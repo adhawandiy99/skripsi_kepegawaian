@@ -9,7 +9,7 @@
                     <div class="card-header">
                         <h3 class="card-title"><strong>Usul Kenaikan Gaji Berkala</strong></h3>
                     </div>
-                    <form action="{{ route('simpan.berkala') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('simpan.berkala',[Request::segment(3)]) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                          <div class="row">
                             <div class="mb-3 col-md-6">
@@ -50,15 +50,15 @@
                             </div>
                             <div class="mb-3 col-md-6">
                                 <label for="gaji_id" class="form-label">Gaji Baru</label>
-                                <select name="gaji_id" class="form-select @error('gaji_id') is-invalid @enderror">
-                                    <option value="" selected disabled>---Pilih Gaji Baru---</option>
-                                          @foreach ($gaji as $gajis)
-                                              @if (old('gaji_id') == $gajis->gaji_id)
-                                              <option value="{{ $gajis->id }}">{{ $gajis->gaji_pokok }}</option>
-                                              @else
-                                              <option value="{{ $gajis->id }}">{{ $gajis->gaji_pokok }}</option>
-                                              @endif
-                                          @endforeach
+                                <select name="gaji_id" class="form-select @error('gaji_id') is-invalid @enderror" id="gaji_id">
+                                    <option value="">---Pilih Gaji Baru---</option>
+                                      @foreach ($gaji as $gajis)
+                                          @if (old('gaji_id') == $gajis->gaji_id)
+                                          <option value="{{ $gajis->id }}" selected>{{ $gajis->gaji_pokok }}</option>
+                                          @else
+                                          <option value="{{ $gajis->id }}">{{ $gajis->gaji_pokok }}</option>
+                                          @endif
+                                      @endforeach
                                 </select>
                                 @error('gaji_id')
                                     <div class="invalid-feedback">
@@ -72,7 +72,7 @@
                             </div>
                             <div class="mb-3 col-md-6">
                                 <label for="mulai_tanggal" class="form-label">Mulai Tanggal</label>
-                                <input class="form-control @error('mulai_tanggal') is-invalid @enderror" type="date" id="mulai_tanggal" name="mulai_tanggal" value="{{ old('mulai_tanggal') }}" />
+                                <input class="form-control @error('mulai_tanggal') is-invalid @enderror" type="date" id="mulai_tanggal" name="mulai_tanggal" value="{{  isset($kenaikan->mulai_tanggal)?$kenaikan->mulai_tanggal:old('mulai_tanggal') }}" />
                                 @error('mulai_tanggal')
                                 <div class="invalid-feedback">
                                 {{ $message }}
@@ -81,7 +81,7 @@
                             </div>
                             <div class="mb-3 col-md-6">
                                 <label for="naik_selanjutnya" class="form-label">Tanggal Kenaikan Selanjutnya</label>
-                                <input class="form-control @error('naik_selanjutnya') is-invalid @enderror" type="date" id="naik_selanjutnya" name="naik_selanjutnya" value="{{ old('naik_selanjutnya') }}" />
+                                <input class="form-control @error('naik_selanjutnya') is-invalid @enderror" type="date" id="naik_selanjutnya" name="naik_selanjutnya" value="{{ isset($kenaikan->naik_selanjutnya)?$kenaikan->naik_selanjutnya:old('naik_selanjutnya') }}" />
                                 @error('naik_selanjutnya')
                                 <div class="invalid-feedback">
                                 {{ $message }}
@@ -89,9 +89,28 @@
                              @enderror
                             </div>
                         </div>
+                        <?php
+                            $sk_berkala_terakhir = "";
+                            if(file_exists( base_path()."/public/storage/uploads/skbt/".Request::segment(3).".pdf")){
+                                $url1 = base_path()."/storage/app/public/uploads/".Request::segment(3).".pdf";
+                                $sk_berkala_terakhir = '<a href="{{asset("/storage/app/public/uploads/skbt/'.Request::segment(3).'.pdf")}}">download</a>';
+                            }
+                            $sk_cpns = "";
+                            if(file_exists( base_path()."/public/storage/uploads/skbt/".Request::segment(3).".pdf")){
+                                $sk_cpns = base_path()."/public/storage/uploads/sk-cpns/".Request::segment(3).".pdf";
+                            }
+                            $sk_naik_pangkat_akhir = "";
+                            if(file_exists( base_path()."/public/storage/uploads/skbt/".Request::segment(3).".pdf")){
+                                $sk_naik_pangkat_akhir = base_path()."/public/storage/uploads/sk-naik-pangkat-terakhir/".Request::segment(3).".pdf";
+                            }
+                            $sk_mangku_jabat = "";
+                            if(file_exists( base_path()."/public/storage/uploads/skbt/".Request::segment(3).".pdf")){
+                                $sk_mangku_jabat = base_path()."/public/storage/uploads/sk-pemangku-jabatan/".Request::segment(3).".pdf";
+                            }
+                        ?>
                         <div class="row">
                             <div class="mb-3 col-md-6">
-                                <label for="sk_berkala_terakhir">Fotocopy SK Berkala Terakhir</label>
+                                <label for="sk_berkala_terakhir">Fotocopy SK Berkala Terakhir <a href="{{$url1}}" download="9.pdf">download</a></label>
                                     <input type="file" class="form-control col-4 @error('sk_berkala_terakhir') is-invalid @enderror" id="sk_berkala_terakhir" name="sk_berkala_terakhir" >
                                     @error('sk_berkala_terakhir')
                                 <div class="invalid-feedback">
@@ -120,7 +139,7 @@
                         <div class="row">
                             <div class="mb-3 col-md-6">
                                 <label for="tgl_usulan" class="form-label">Tanggal Diusulkan</label>
-                                <input class="form-control @error('tgl_usulan') is-invalid @enderror" type="date" id="tgl_usulan" name="tgl_usulan" value="{{ old('tgl_usulan') }}" />
+                                <input class="form-control @error('tgl_usulan') is-invalid @enderror" type="date" id="tgl_usulan" name="tgl_usulan" value="{{ isset($kenaikan->tgl_usulan)?$kenaikan->tgl_usulan:old('tgl_usulan') }}" />
                                 @error('tgl_usulan')
                                 <div class="invalid-feedback">
                                 {{ $message }}
@@ -137,4 +156,12 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('js')
+    <script type="text/javascript">
+        var kenaikan = <?= json_encode($kenaikan); ?>;
+        $('#gaji_id').val(kenaikan.gaji_id);
+
+    </script>
 @endsection

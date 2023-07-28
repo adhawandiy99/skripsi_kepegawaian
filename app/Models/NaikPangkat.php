@@ -15,7 +15,7 @@ class NaikPangkat extends Model
         'mulai_tanggal',
         'naik_selanjutnya',
         'tgl_usulan',
-        'link',
+        'link','jenis_usulan'
         ];
 
         public function user_pegawai()
