@@ -13,10 +13,11 @@
               </p>
         </div>
     </div>
-    <div class="alert alert-info my-4">
-      <strong><i class="bx bxs-bell bx-tada"></i></strong> Ferdy - nip:1900000 telah submit kenaikan pangkat pada tanggal 28-juli-2023. <strong><a class="alert-link" href="https://boxicons.com/" target="_blank" rel="noopener noreferrer">Silahkan klik menuju <a href="/home">Approval</a></strong>.
-    </div>
-
+    @foreach($kenaikan_pangkat as $p)
+        <div class="alert alert-info my-4">
+          <strong><i class="bx bxs-bell bx-tada"></i></strong> {{ $p->name }} - NIP:{{ $p->nip }} telah submit kenaikan pangkat <strong>{{ $p->jabatan }}</strong> pada tanggal {{ $p->tgl_usulan }}. <strong><a class="alert-link" href="https://boxicons.com/" target="_blank" rel="noopener noreferrer"><br>Silahkan klik menuju <a href="{{ str_replace('index','approval',$p->link_approve) }}/{{ $p->id }}">Approval</a>/<a href="{{ $p->link_approve }}">List Approval</a></strong>.
+        </div>
+    @endforeach
 </div>
 @endsection
 @section('js')

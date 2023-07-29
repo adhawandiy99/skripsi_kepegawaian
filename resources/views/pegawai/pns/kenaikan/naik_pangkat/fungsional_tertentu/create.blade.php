@@ -10,7 +10,7 @@
                     <p>Silahkan Isi Data yang diperlukan</p>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('simpan.pangkat.ft',['kenaikan_id'=>Request::segment(3)]) }}" method="POST">
+                    <form action="{{ route('simpan.pangkat.ft',['kenaikan_id'=>Request::segment(3)]) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name="jenis_usulan" value="4">
                          <div class="row">
@@ -126,6 +126,22 @@
                                 </div>
                              @enderror
                             </div>
+                            <div class="mb-3 col-md-6">
+                                <?php
+                                    $file_pangkat = "";
+                                    if(file_exists( base_path()."/public/storage/uploads/file_pangkat/".Request::segment(3).".rar")){
+                                        $url = urldecode("/file_pangkat/".Request::segment(3).".rar");
+                                        $file_pangkat = '<button type="button" class="downloadable btn-xs btn-primary" data-path="'.$url.'" data-name="file_pangkat.rar">download</button>';
+                                    }
+                                ?>
+                                <label for="file_pangkat">File RAR {!! $file_pangkat !!}</label>
+                                <input type="file" class="form-control col-4 @error('file_pangkat') is-invalid @enderror" id="file_pangkat" name="file_pangkat" >
+                                @error('file_pangkat')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
                         </div>
                          <button type="submit" class="btn btn-info ">Simpan</button>
                          <a href="{{ route('menu.pangkat.ft') }}" class="btn btn-danger">Kembali</a>
@@ -135,12 +151,21 @@
         </div>
     </div>
 </div>
+<form method="post" action="/download" id="download">
+    @csrf
+    <input type="hidden" name="downloadpath">
+    <input type="hidden" name="downloadname">
+</form>
 @endsection
-
 @section('js')
     <script type="text/javascript">
         var kenaikan = <?= json_encode($kenaikan); ?>;
         $('#pangkat_id').val(kenaikan.pangkat_id);
-
+        $('.downloadable').click(function(){
+            $('input[name=downloadpath]').val(this.dataset.path);
+            $('input[name=downloadname]').val(this.dataset.name);
+            console.log(this.dataset);
+            $('#download').submit();
+        });
     </script>
 @endsection

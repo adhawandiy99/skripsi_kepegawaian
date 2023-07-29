@@ -4,26 +4,25 @@
         @csrf
         <div class="card-body">
             <div class="d-flex align-items-start align-items-sm-center gap-4">
-            @if (file_exists(public_path().'/images/'.$user->id.'.png'))
-              <img src="/images/{{ $user->id }}.png" alt="user-avatar" class="d-block rounded" height="100" width="100" id="uploadedAvatar" />
-            @else
-                <img src="/placeholder.png" alt="user-avatar" class="d-block rounded" height="100" width="100" id="uploadedAvatar" />
-            @endif
-              <div class="button-wrapper">
-                <label for="foto">Foto</label>
-                <input type="hidden" name="oldFoto" value="{{ $user->foto }}">
-                <img class="img-preview img-fluid mb-3 col-sm-2">
-                <input type="file" class="form-control col-4 @error('foto') is-invalid @enderror" id="foto" name="foto"  onchange="previewImage()" accept="image/*" >
-                @error('foto')
-                    <div class="invalid-feedback">
-                     {{ $message }}
-                     </div>
-                 @enderror
-                 <button type="submit" class="btn btn-info btn-sm mt-2">Simpan</button>
-                 <button type="button" class="btn btn-info btn-sm mt-2" id="create_pdf">Pdf</button>
+                @if (file_exists(public_path().'/images/'.$user->id.'.png'))
+                  <img src="/images/{{ $user->id }}.png" alt="user-avatar" class="d-block rounded" height="100" width="100" id="uploadedAvatar" />
+                @else
+                    <img src="/placeholder.png" alt="user-avatar" class="d-block rounded" height="100" width="100" id="uploadedAvatar" />
+                @endif
+                <div class="button-wrapper">
+                    <label for="foto">Foto</label>
+                    <input type="hidden" name="oldFoto" value="{{ $user->foto }}">
+                    <img class="img-preview img-fluid mb-3 col-sm-2">
+                    <input type="file" class="form-control col-4 @error('foto') is-invalid @enderror" id="foto" name="foto"  onchange="previewImage()" accept="image/*" >
+                    @error('foto')
+                        <div class="invalid-feedback">
+                         {{ $message }}
+                         </div>
+                     @enderror
+                     <button type="submit" class="btn btn-info btn-sm mt-2">Simpan</button>
                 </div>
             </div>
-          </div>
+        </div>
         </form>
           <hr class="my-0" />
           <form action="{{ route('update.pegawai', $user->id) }}" method="POST" enctype="multipart/form-data">

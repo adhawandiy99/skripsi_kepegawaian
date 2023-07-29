@@ -6,6 +6,7 @@ use App\Http\Controllers\NaikBerkalaController;
 use App\Http\Controllers\NaikPangkatController;
 use App\Http\Controllers\PangkatController;
 use App\Http\Controllers\PegawaiController;
+use App\Http\Controllers\LandingPageController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,9 +20,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::post('/download', [App\Http\Controllers\HomeController::class, 'download'])->name('download');
+Route::get('/', [LandingPageController::class, 'show']);
 
 Auth::routes();
 
@@ -38,6 +38,13 @@ Route::group(['prefix' => 'Admin', 'middleware' => ['auth','role:Admin']], funct
     Route::resource('naik-berkala', NaikBerkalaController::class);
     Route::resource('gaji', GajiController::class);
     Route::resource('pangkat', PangkatController::class);
+
+    //landing page crud
+    Route::get('/landing-pages', [LandingPageController::class, 'list']);
+    Route::get('/landing-page/{id}', [LandingPageController::class, 'form']);
+    Route::post('/landing-page/{id}', [LandingPageController::class, 'save']);
+    Route::post('/landing-page-delete', [LandingPageController::class, 'delete']);
+
     Route::get('show-riwayat-pendidikan/{id}', [PegawaiController::class, 'showRiwayatPend'])->name('show.pendidikan');
     //cetak Daftar PNS
     Route::get('print-pns', [PegawaiController::class, 'printPDF'])->name('print.pns');

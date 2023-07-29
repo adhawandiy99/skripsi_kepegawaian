@@ -40,7 +40,7 @@
                                 <td>{{ $no++ }}</td>
                                 <td>{{ $item->user_pegawai->nip }}</td>
                                 <td>{{ $item->user_pegawai->name }}</td>
-                                <td>{{ $item->user_pegawai->kepegawaian_pns->gaji }}</td>
+                                <td>{{ isset($item->user_pegawai->kepegawaian_pns->gaji)?$item->user_pegawai->kepegawaian_pns->gaji:'' }}</td>
                                 <td>{{ $item->gaji->gaji_pokok }}</td>
                                 <td>{{ $item->tgl_usulan }}</td>
                                 <td>{{ $item->ket }}</td>

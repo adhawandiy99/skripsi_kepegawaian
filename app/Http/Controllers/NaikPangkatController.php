@@ -168,21 +168,35 @@ class NaikPangkatController extends Controller
     //Fungsi Simpan Data Kenaikan Pangkat Jabatan Reguler Eselon Struktural
     public function storeStruktrural($kenaikan_id, Request $request)
     {
-
-        $validateData = $request->validate([
-            'pangkat_id' => 'required',
-            'mulai_tanggal' => 'required',
-            'naik_selanjutnya' => 'required',
-            'tgl_usulan' => 'required',
-            'jenis_usulan' => 'required',
-        ]);
-        $validateData['user_id'] = auth()->user()->id;
         if(QB_Kenaikan_pangkat::getById($kenaikan_id)){
             //todo update
+             $validateData = $request->validate([
+                'pangkat_id' => 'required',
+                'mulai_tanggal' => 'required',
+                'naik_selanjutnya' => 'required',
+                'tgl_usulan' => 'required',
+                'jenis_usulan' => 'required',
+                'file_pangkat' => 'mimes:rar|max:2048'
+            ]);
+            $validateData['user_id'] = auth()->user()->id;
             NaikPangkat::where('id',$kenaikan_id)->update($validateData);
         }else{
             //todo insert
-            NaikPangkat::create($validateData);
+            $validateData = $request->validate([
+                'pangkat_id' => 'required',
+                'mulai_tanggal' => 'required',
+                'naik_selanjutnya' => 'required',
+                'tgl_usulan' => 'required',
+                'jenis_usulan' => 'required',
+                'file_pangkat' => 'required|mimes:rar|max:2048'
+            ]);
+            $validateData['user_id'] = auth()->user()->id;
+            $kenaikan_id = NaikPangkat::create($validateData)->id;
+        }
+
+        if($request->file('file_pangkat')){
+            $fileName = $kenaikan_id.'.'.$request->file('file_pangkat')->getClientOriginalExtension();
+            $request->file('file_pangkat')->storeAs('uploads/file_pangkat', $fileName, 'public');
         }
         Alert::success('Sukses', 'Data Usul Kenaikan Pangkat Jabatan Eselon Struktural Berhasil Disimpan');
         return redirect()->route('menu.pangkat.struktural');
@@ -213,20 +227,35 @@ class NaikPangkatController extends Controller
     }
     public function simpanPelaksanaStaf($kenaikan_id, Request $request)
     {
-        $validateData = $request->validate([
-            'pangkat_id' => 'required',
-            'mulai_tanggal' => 'required',
-            'naik_selanjutnya' => 'required',
-            'tgl_usulan' => 'required',
-            'jenis_usulan' => 'required',
-        ]);
-        $validateData['user_id'] = auth()->user()->id;
         if(QB_Kenaikan_pangkat::getById($kenaikan_id)){
             //todo update
+             $validateData = $request->validate([
+                'pangkat_id' => 'required',
+                'mulai_tanggal' => 'required',
+                'naik_selanjutnya' => 'required',
+                'tgl_usulan' => 'required',
+                'jenis_usulan' => 'required',
+                'file_pangkat' => 'mimes:rar|max:2048'
+            ]);
+            $validateData['user_id'] = auth()->user()->id;
             NaikPangkat::where('id',$kenaikan_id)->update($validateData);
         }else{
             //todo insert
-            NaikPangkat::create($validateData);
+            $validateData = $request->validate([
+                'pangkat_id' => 'required',
+                'mulai_tanggal' => 'required',
+                'naik_selanjutnya' => 'required',
+                'tgl_usulan' => 'required',
+                'jenis_usulan' => 'required',
+                'file_pangkat' => 'required|mimes:rar|max:2048'
+            ]);
+            $validateData['user_id'] = auth()->user()->id;
+            $kenaikan_id = NaikPangkat::create($validateData)->id;
+        }
+
+        if($request->file('file_pangkat')){
+            $fileName = $kenaikan_id.'.'.$request->file('file_pangkat')->getClientOriginalExtension();
+            $request->file('file_pangkat')->storeAs('uploads/file_pangkat', $fileName, 'public');
         }
         Alert::success('Sukses', 'Data Usul Kenaikan Pangkat Jabatan Pelaksana Staff Berhasil Disimpan');
         return redirect()->route('menu.pangkat.pestaf');
@@ -259,20 +288,35 @@ class NaikPangkatController extends Controller
 
     public function simpanPSI($kenaikan_id, Request $request)
     {
-        $validateData = $request->validate([
-            'pangkat_id' => 'required',
-            'mulai_tanggal' => 'required',
-            'naik_selanjutnya' => 'required',
-            'tgl_usulan' => 'required',
-            'jenis_usulan' => 'required',
-        ]);
-        $validateData['user_id'] = auth()->user()->id;
         if(QB_Kenaikan_pangkat::getById($kenaikan_id)){
             //todo update
+             $validateData = $request->validate([
+                'pangkat_id' => 'required',
+                'mulai_tanggal' => 'required',
+                'naik_selanjutnya' => 'required',
+                'tgl_usulan' => 'required',
+                'jenis_usulan' => 'required',
+                'file_pangkat' => 'mimes:rar|max:2048'
+            ]);
+            $validateData['user_id'] = auth()->user()->id;
             NaikPangkat::where('id',$kenaikan_id)->update($validateData);
         }else{
             //todo insert
-            NaikPangkat::create($validateData);
+            $validateData = $request->validate([
+                'pangkat_id' => 'required',
+                'mulai_tanggal' => 'required',
+                'naik_selanjutnya' => 'required',
+                'tgl_usulan' => 'required',
+                'jenis_usulan' => 'required',
+                'file_pangkat' => 'required|mimes:rar|max:2048'
+            ]);
+            $validateData['user_id'] = auth()->user()->id;
+            $kenaikan_id = NaikPangkat::create($validateData)->id;
+        }
+
+        if($request->file('file_pangkat')){
+            $fileName = $kenaikan_id.'.'.$request->file('file_pangkat')->getClientOriginalExtension();
+            $request->file('file_pangkat')->storeAs('uploads/file_pangkat', $fileName, 'public');
         }
         Alert::success('Sukses', 'Data Usul Kenaikan Pangkat Jabatan Pelaksana/Staf Penyesuaian Ijazah Berhasil Disimpan');
         return redirect()->route('menu.pangkat.pestafijazah');
@@ -302,22 +346,37 @@ class NaikPangkatController extends Controller
         $kenaikan = QB_Kenaikan_pangkat::getById($kenaikan_id);
         return view('pegawai.pns.kenaikan.naik_pangkat.fungsional_tertentu.create', compact('pangkat', 'user', 'kenaikan'));
     }
-    public function insertOrUpdateFt($kenaikan_id, Request $req)
+    public function insertOrUpdateFt($kenaikan_id, Request $request)
     {
-        $validateData = $req->validate([
-            'pangkat_id' => 'required',
-            'mulai_tanggal' => 'required',
-            'naik_selanjutnya' => 'required',
-            'tgl_usulan' => 'required',
-            'jenis_usulan' => 'required',
-        ]);
-        $validateData['user_id'] = auth()->user()->id;
         if(QB_Kenaikan_pangkat::getById($kenaikan_id)){
             //todo update
+             $validateData = $request->validate([
+                'pangkat_id' => 'required',
+                'mulai_tanggal' => 'required',
+                'naik_selanjutnya' => 'required',
+                'tgl_usulan' => 'required',
+                'jenis_usulan' => 'required',
+                'file_pangkat' => 'mimes:rar|max:2048'
+            ]);
+            $validateData['user_id'] = auth()->user()->id;
             NaikPangkat::where('id',$kenaikan_id)->update($validateData);
         }else{
             //todo insert
-            NaikPangkat::create($validateData);
+            $validateData = $request->validate([
+                'pangkat_id' => 'required',
+                'mulai_tanggal' => 'required',
+                'naik_selanjutnya' => 'required',
+                'tgl_usulan' => 'required',
+                'jenis_usulan' => 'required',
+                'file_pangkat' => 'required|mimes:rar|max:2048'
+            ]);
+            $validateData['user_id'] = auth()->user()->id;
+            $kenaikan_id = NaikPangkat::create($validateData)->id;
+        }
+
+        if($request->file('file_pangkat')){
+            $fileName = $kenaikan_id.'.'.$request->file('file_pangkat')->getClientOriginalExtension();
+            $request->file('file_pangkat')->storeAs('uploads/file_pangkat', $fileName, 'public');
         }
         Alert::success('Sukses', 'Data Usul Kenaikan Pangkat Jabatan Fungsional Tertentu Berhasil Disimpan');
         return redirect()->route('menu.pangkat.ft');

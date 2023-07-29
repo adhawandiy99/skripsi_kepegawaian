@@ -18,4 +18,23 @@ class QB_Kenaikan_pangkat
   {
     return DB::table('naik_pangkats')->where('user_id', $user_id)->where('jenis_usulan', $jenis_usulan)->get();
   }
+  public static function getAll()
+  {
+    return DB::table('naik_pangkats as n')
+    ->select(DB::raw('(CASE
+          WHEN jenis_usulan=1 THEN "Jabatan Reguler Eselon Struktural"
+          WHEN jenis_usulan=2 THEN "Jabatan Pelaksana/Staf"
+          WHEN jenis_usulan=3 THEN "Jabatan Pelaksana/Staf Penyesuaian Ijazah"
+          WHEN jenis_usulan=4 THEN "Jabatan Fungsional Tertentu"
+          ELSE "Not Filled"
+      END) as jabatan, (CASE
+          WHEN jenis_usulan=1 THEN "/Admin/index-struktural"
+          WHEN jenis_usulan=2 THEN "/Admin/index-pelasana-staf"
+          WHEN jenis_usulan=3 THEN "/Admin/index-pelasana-staf-ijazah"
+          WHEN jenis_usulan=4 THEN "/Admin/index-fungsional"
+          ELSE "Not Filled"
+      END) as link_approve,n.*,u.name,u.nip'))
+    ->leftJoin('users as u','n.user_id','=','u.id')
+    ->get();
+  }
 }

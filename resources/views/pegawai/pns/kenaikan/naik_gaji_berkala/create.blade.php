@@ -92,25 +92,30 @@
                         <?php
                             $sk_berkala_terakhir = "";
                             if(file_exists( base_path()."/public/storage/uploads/skbt/".Request::segment(3).".pdf")){
-                                $url1 = base_path()."/storage/app/public/uploads/".Request::segment(3).".pdf";
-                                $sk_berkala_terakhir = '<a href="{{asset("/storage/app/public/uploads/skbt/'.Request::segment(3).'.pdf")}}">download</a>';
+                                $url = urldecode("/skbt/".Request::segment(3).".pdf");
+                                $sk_berkala_terakhir = '<button type="button" class="downloadable btn-xs btn-primary" data-path="'.$url.'" data-name="sk_berkala_terakhir.pdf">download</button>';
                             }
                             $sk_cpns = "";
-                            if(file_exists( base_path()."/public/storage/uploads/skbt/".Request::segment(3).".pdf")){
-                                $sk_cpns = base_path()."/public/storage/uploads/sk-cpns/".Request::segment(3).".pdf";
+                            if(file_exists( base_path()."/public/storage/uploads/sk-cpns/".Request::segment(3).".pdf")){
+                                $url = urldecode("/sk-cpns/".Request::segment(3).".pdf");
+                                $sk_cpns = '<button type="button" class="downloadable btn-xs btn-primary" data-path="'.$url.'" data-name="sk_cpns.pdf">download</button>';
                             }
                             $sk_naik_pangkat_akhir = "";
-                            if(file_exists( base_path()."/public/storage/uploads/skbt/".Request::segment(3).".pdf")){
-                                $sk_naik_pangkat_akhir = base_path()."/public/storage/uploads/sk-naik-pangkat-terakhir/".Request::segment(3).".pdf";
+                            if(file_exists( base_path()."/public/storage/uploads/sk-naik-pangkat-terakhir/".Request::segment(3).".pdf")){
+                                $url = urldecode("/sk-naik-pangkat-terakhir/".Request::segment(3).".pdf");
+                                $sk_naik_pangkat_akhir = '<button type="button" class="downloadable btn-xs btn-primary" data-path="'.$url.'" data-name="sk_naik_pangkat_akhir.pdf">download</button>';
                             }
                             $sk_mangku_jabat = "";
-                            if(file_exists( base_path()."/public/storage/uploads/skbt/".Request::segment(3).".pdf")){
-                                $sk_mangku_jabat = base_path()."/public/storage/uploads/sk-pemangku-jabatan/".Request::segment(3).".pdf";
+                            if(file_exists( base_path()."/public/storage/uploads/sk-pemangku-jabatan/".Request::segment(3).".pdf")){
+                                $url = urldecode("/sk-pemangku-jabatan/".Request::segment(3).".pdf");
+                                $sk_mangku_jabat = '<button type="button" class="downloadable btn-xs btn-primary" data-path="'.$url.'" data-name="sk_mangku_jabat.pdf">download</button>';
                             }
                         ?>
                         <div class="row">
                             <div class="mb-3 col-md-6">
-                                <label for="sk_berkala_terakhir">Fotocopy SK Berkala Terakhir <a href="{{$url1}}" download="9.pdf">download</a></label>
+                                <label for="sk_berkala_terakhir">Fotocopy SK Berkala Terakhir 
+                                    {!! $sk_berkala_terakhir !!}
+                                </label>
                                     <input type="file" class="form-control col-4 @error('sk_berkala_terakhir') is-invalid @enderror" id="sk_berkala_terakhir" name="sk_berkala_terakhir" >
                                     @error('sk_berkala_terakhir')
                                 <div class="invalid-feedback">
@@ -119,7 +124,7 @@
                              @enderror
                             </div>
                             <div class="mb-3 col-md-6">
-                                <label for="sk_cpns">SK CPNS</label>
+                                <label for="sk_cpns">SK CPNS {!! $sk_cpns !!}</label>
                                     <input type="file" class="form-control col-4 @error('sk_cpns') is-invalid @enderror" id="sk_cpns" name="sk_cpns" >
                                     @error('sk_cpns')
                                 <div class="invalid-feedback">
@@ -128,11 +133,11 @@
                              @enderror
                             </div>
                             <div class="mb-3 col-md-6">
-                                <label for="sk_naik_pangkat_akhir">SK Kenaikan Pangkat Terakhir</label>
+                                <label for="sk_naik_pangkat_akhir">SK Kenaikan Pangkat Terakhir {!! $sk_naik_pangkat_akhir !!}</label>
                                     <input type="file" class="form-control col-4 " id="sk_naik_pangkat_akhir" name="sk_naik_pangkat_akhir" >
                             </div>
                             <div class="mb-3 col-md-6">
-                                <label for="sk_mangku_jabat">SK Pemangku Jabatan</label>
+                                <label for="sk_mangku_jabat">SK Pemangku Jabatan {!! $sk_mangku_jabat !!}</label>
                                     <input type="file" class="form-control col-4 " id="sk_mangku_jabat" name="sk_mangku_jabat" >
                             </div>
                         </div>
@@ -156,12 +161,22 @@
         </div>
     </div>
 </div>
+<form method="post" action="/download" id="download">
+    @csrf
+    <input type="hidden" name="downloadpath">
+    <input type="hidden" name="downloadname">
+</form>
 @endsection
 
 @section('js')
     <script type="text/javascript">
         var kenaikan = <?= json_encode($kenaikan); ?>;
-        $('#gaji_id').val(kenaikan.gaji_id);
-
+        $('#gaji_id').val(kenaikan ? kenaikan.gaji_id : '');
+        $('.downloadable').click(function(){
+            $('input[name=downloadpath]').val(this.dataset.path);
+            $('input[name=downloadname]').val(this.dataset.name);
+            console.log(this.dataset);
+            $('#download').submit();
+        });
     </script>
 @endsection
